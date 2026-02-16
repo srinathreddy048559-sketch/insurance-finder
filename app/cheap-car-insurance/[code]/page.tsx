@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { STATES } from "@/app/data/states";
 import JsonLd from "@/app/components/JsonLd";
+import { COMPANIES } from "@/app/data/companies";
 
 const baseUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "https://insurancefinder.com";
@@ -65,7 +66,8 @@ export default async function CheapInsuranceStatePage({ params }: PageProps) {
 
   if (!st) return notFound();
 
-  const pageUrl = `${baseUrl}/cheap-car-insurance/${st.code}`;
+  const code = st.code;
+  const pageUrl = `${baseUrl}/cheap-car-insurance/${code}`;
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -81,7 +83,7 @@ export default async function CheapInsuranceStatePage({ params }: PageProps) {
       {
         "@type": "ListItem",
         position: 3,
-        name: `${st.name} (${st.code})`,
+        name: `${st.name} (${code})`,
         item: pageUrl,
       },
     ],
@@ -90,7 +92,7 @@ export default async function CheapInsuranceStatePage({ params }: PageProps) {
   const webPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: `Cheap Car Insurance in ${st.name} (${st.code})`,
+    name: `Cheap Car Insurance in ${st.name} (${code})`,
     url: pageUrl,
     isPartOf: {
       "@type": "WebSite",
@@ -133,7 +135,7 @@ export default async function CheapInsuranceStatePage({ params }: PageProps) {
           </Link>{" "}
           <span className="mx-2">/</span>
           <span className="text-slate-700 font-medium">
-            {st.name} ({st.code})
+            {st.name} ({code})
           </span>
         </div>
 
@@ -178,6 +180,54 @@ export default async function CheapInsuranceStatePage({ params }: PageProps) {
               BI = Bodily Injury • PD = Property Damage • PIP = Personal Injury Protection
             </p>
           </div>
+        </section>
+
+        {/* ✅ Companies Section */}
+        <section className="mt-10 rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_16px_50px_rgba(15,23,42,0.06)]">
+          <h2 className="text-2xl font-bold text-slate-900">
+            Compare insurance companies in {code}
+          </h2>
+          <p className="mt-2 text-slate-600">
+            Tap “Get Quote” to check pricing on the official provider website.
+          </p>
+
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+            {COMPANIES.map((c) => (
+              <div
+                key={c.id}
+                className="rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.05)]"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-lg font-bold text-slate-900">{c.name}</p>
+                    <p className="mt-1 text-sm text-slate-600">{c.tagline}</p>
+                  </div>
+
+                  <a
+                    href={`/out/${c.id}?state=${code}`}
+                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
+                    rel="nofollow sponsored"
+                    target="_blank"
+                  >
+                    Get Quote →
+                  </a>
+                </div>
+
+                <div className="mt-4">
+                  <p className="text-sm font-semibold text-slate-900">Best for</p>
+                  <ul className="mt-2 list-disc pl-5 text-sm text-slate-600">
+                    {c.bestFor.map((b) => (
+                      <li key={b}>{b}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-6 text-xs text-slate-500">
+            Disclaimer: Insurance Finder is not an insurance provider. We link to providers for quotes.
+          </p>
         </section>
 
         {/* tips */}
